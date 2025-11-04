@@ -1,7 +1,8 @@
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Asistente Sci-Fi Offline</title>
+<title>Asistente Sci-Fi Estático</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
 
@@ -31,9 +32,8 @@ body {
     flex: 1;
     padding: 20px;
     overflow-y: auto;
-    max-height: 600px;
     display: flex;
-    flex-direction: column;
+    flex-direction: column-reverse; /* mensajes hacia arriba */
     font-size: 14px;
     line-height: 1.5;
 }
@@ -92,7 +92,6 @@ button:hover {
     background: #00d1b2;
 }
 
-/* Cursor estilo consola */
 .cursor {
     display: inline-block;
     width: 2px;
@@ -121,7 +120,6 @@ button:hover {
 const chatBox = document.getElementById('chatBox');
 const userInput = document.getElementById('userInput');
 
-// Mega array de respuestas (aquí puedes poner tu array completo de 500+)
 const respuestas = [
   {keywords:["hola","buenos días","buenas"], respuesta:"¡Hola! ¿Cómo estás?" },
   {keywords:["cómo estás","qué tal"], respuesta:"Estoy bien, gracias por preguntar. ¿Y tú?" },
@@ -346,30 +344,27 @@ const respuestas = [
   {keywords:["formas de aprender programación de manera divertida","programación gamificada","coding"], respuesta:"Crea pequeños juegos, resuelve retos online y participa en hackathons."},
   {keywords:["qué hacer para mejorar mi postura","espalda recta","ejercicios postura"], respuesta:"Haz estiramientos, fortalece tu core y ajusta la altura de sillas y mesas al sentarte."}
 ];
-
-// Función para enviar mensaje del usuario
+// Enviar mensaje
 function sendMessage() {
     const text = userInput.value.trim();
     if(!text) return;
     
     addMessage(text, 'user');
     userInput.value = '';
-    chatBox.scrollTop = chatBox.scrollHeight;
 
     const respuesta = getRespuesta(text);
     typeResponse(respuesta);
 }
 
-// Añade un mensaje al chat
+// Añadir mensaje al chat
 function addMessage(text, type) {
     const div = document.createElement('div');
     div.className = `message ${type}`;
     div.textContent = text;
-    chatBox.appendChild(div);
-    chatBox.scrollTop = chatBox.scrollHeight;
+    chatBox.prepend(div); // prepend para que aparezca arriba
 }
 
-// Busca la respuesta en el array
+// Obtener respuesta
 function getRespuesta(text) {
     const lowerText = text.toLowerCase();
     for(const item of respuestas) {
@@ -382,11 +377,11 @@ function getRespuesta(text) {
     return "Lo siento, no tengo una respuesta para eso todavía.";
 }
 
-// Escribe la respuesta como si fuera en tiempo real
+// Escribir respuesta como si fuera en tiempo real sin mover scroll
 function typeResponse(text) {
     const div = document.createElement('div');
     div.className = 'message assistant';
-    chatBox.appendChild(div);
+    chatBox.prepend(div);
 
     let i = 0;
     const cursor = document.createElement('span');
@@ -397,8 +392,7 @@ function typeResponse(text) {
         if(i < text.length) {
             cursor.insertAdjacentText('beforebegin', text[i]);
             i++;
-            chatBox.scrollTop = chatBox.scrollHeight;
-            setTimeout(typeChar, 30); // velocidad de escritura
+            setTimeout(typeChar, 30);
         } else {
             cursor.remove();
         }
@@ -406,7 +400,7 @@ function typeResponse(text) {
     typeChar();
 }
 
-// Permite enviar mensaje con Enter
+// Permitir enviar con Enter
 userInput.addEventListener('keydown', function(e){
     if(e.key === 'Enter') sendMessage();
 });
