@@ -2,9 +2,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Asistente Personal Inteligente</title>
+<title>Asistente Personal GPT</title>
 <style>
-body { font-family: Arial; background: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+body { font-family: Arial, sans-serif; background: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
 .chat-container { width: 400px; max-width: 90%; background: #fff; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); display: flex; flex-direction: column; overflow: hidden; }
 .chat-box { flex: 1; padding: 20px; overflow-y: auto; }
 .message { margin-bottom: 15px; padding: 10px 15px; border-radius: 20px; max-width: 75%; word-wrap: break-word; }
@@ -29,6 +29,9 @@ button { padding: 15px 20px; background: #007bff; border: none; color: white; cu
 const chatBox = document.getElementById('chatBox');
 const userInput = document.getElementById('userInput');
 
+// ⚠️ Pega tu API Key aquí. Solo para uso local
+const apiKey = "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";
+
 function appendMessage(text, sender) {
     const div = document.createElement('div');
     div.classList.add('message', sender);
@@ -42,23 +45,28 @@ async function sendMessage() {
     if (!mensaje) return;
     appendMessage(mensaje, "user");
     userInput.value = "";
-
     appendMessage("Escribiendo respuesta...", "assistant");
 
     try {
-        // Aquí se haría el fetch al backend que llama a la API de OpenAI
-        const res = await fetch('https://tu-backend.com/preguntar', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ pregunta: mensaje })
+        const res = await fetch("https://api.openai.com/v1/chat/completions", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${apiKey}`
+            },
+            body: JSON.stringify({
+                model: "gpt-4o-mini",
+                messages: [{ role: "user", content: mensaje }]
+            })
         });
+
         const data = await res.json();
-        // Eliminar mensaje temporal "Escribiendo respuesta..."
-        chatBox.lastChild.remove();
-        appendMessage(data.respuesta, "assistant");
+        chatBox.lastChild.remove(); // eliminar mensaje temporal
+        appendMessage(data.choices[0].message.content, "assistant");
     } catch (error) {
         chatBox.lastChild.remove();
-        appendMessage("Error al conectar con el asistente.", "assistant");
+        appendMessage("Error al conectar con la API.", "assistant");
+        console.error(error);
     }
 }
 
