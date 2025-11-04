@@ -344,6 +344,7 @@ const respuestas = [
   {keywords:["formas de aprender programación de manera divertida","programación gamificada","coding"], respuesta:"Crea pequeños juegos, resuelve retos online y participa en hackathons."},
   {keywords:["qué hacer para mejorar mi postura","espalda recta","ejercicios postura"], respuesta:"Haz estiramientos, fortalece tu core y ajusta la altura de sillas y mesas al sentarte."}
 ];
+
 // Enviar mensaje
 function sendMessage() {
     const text = userInput.value.trim();
