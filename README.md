@@ -1,153 +1,91 @@
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Asistente Futurista Offline</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ChatBot Futurista</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
-
-body {
+  body {
     margin: 0;
     font-family: 'Orbitron', sans-serif;
-    background: #0a0a0a;
-    color: #00ffea;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    overflow: hidden;
-}
-
-.chat-container {
-    width: 600px;
-    max-width: 95%;
-    height: 80vh;
-    background: #111;
-    border-radius: 15px;
-    box-shadow: 0 0 60px #00ffea, 0 0 90px #00ffea inset;
+    background: #0f0f1f;
+    color: #fff;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
-    position: relative;
-}
+    height: 100vh;
+  }
 
-.chat-box {
+  #chat-container {
     flex: 1;
-    padding: 20px;
-    overflow-y: auto;
     display: flex;
-    flex-direction: column-reverse;
-    font-size: 14px;
-    line-height: 1.5;
-}
+    flex-direction: column-reverse; /* Para que los mensajes suban */
+    overflow-y: auto;
+    padding: 20px;
+    gap: 10px;
+  }
 
-.message {
-    margin-bottom: 15px;
-    padding: 12px 18px;
-    border-radius: 20px;
-    max-width: 75%;
-    word-wrap: break-word;
-    position: relative;
-}
+  .mensaje {
+    padding: 10px 15px;
+    border-radius: 12px;
+    max-width: 70%;
+    word-break: break-word;
+  }
 
-.user {
+  .usuario {
     background: #00ffea;
-    color: #0a0a0a;
+    color: #000;
     align-self: flex-end;
-    border-bottom-right-radius: 0;
-    box-shadow: 0 0 10px #00ffea;
-}
+  }
 
-.assistant {
-    background: transparent;
-    border: 1px solid #00ffea;
+  .bot {
+    background: #0f0f50;
     color: #00ffea;
     align-self: flex-start;
-    border-bottom-left-radius: 0;
-    overflow: hidden;
-    box-shadow: 0 0 10px #00ffea inset;
-}
+  }
 
-.input-box {
+  #input-container {
     display: flex;
-    border-top: 1px solid #00ffea;
+    border-top: 2px solid #00ffea;
+    padding: 10px;
     background: #111;
-}
+  }
 
-input {
+  #user-input {
     flex: 1;
-    padding: 15px;
+    padding: 10px;
     border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-family: 'Orbitron', sans-serif;
     outline: none;
-    font-size: 16px;
-    background: #111;
-    color: #00ffea;
-}
+  }
 
-input::placeholder {
-    color: #00ffea99;
-}
-
-button {
-    padding: 15px 20px;
-    background: #00ffea;
+  #send-btn {
+    margin-left: 10px;
+    padding: 10px 20px;
     border: none;
-    color: #0a0a0a;
+    border-radius: 8px;
+    background: #00ffea;
+    color: #000;
     cursor: pointer;
-    font-size: 16px;
-    transition: 0.2s;
-}
+    font-weight: bold;
+  }
 
-button:hover {
-    background: #00d1b2;
-}
-
-.cursor {
-    display: inline-block;
-    width: 2px;
-    background-color: #00ffea;
-    animation: blink 1s infinite;
-    margin-left: 2px;
-}
-
-@keyframes blink {
-    0%, 50%, 100% { opacity: 1; }
-    25%, 75% { opacity: 0; }
-}
-
-/* Efecto neón parpadeante de todo el contenedor */
-.chat-container::before {
-    content: '';
-    position: absolute;
-    top: -5px; bottom: -5px; left: -5px; right: -5px;
-    border: 2px solid #00ffea;
-    border-radius: 20px;
-    box-shadow: 0 0 30px #00ffea, 0 0 60px #00ffea inset;
-    pointer-events: none;
-    animation: neon 2s infinite alternate;
-}
-
-@keyframes neon {
-    0% { box-shadow: 0 0 30px #00ffea, 0 0 60px #00ffea inset; }
-    50% { box-shadow: 0 0 40px #00ffea, 0 0 80px #00ffea inset; }
-    100% { box-shadow: 0 0 30px #00ffea, 0 0 60px #00ffea inset; }
-}
+  #send-btn:hover {
+    background: #00d4c6;
+  }
 </style>
 </head>
 <body>
 
-<div class="chat-container">
-    <div class="chat-box" id="chatBox"></div>
-    <div class="input-box">
-        <input type="text" id="userInput" placeholder="Escribe tu pregunta...">
-        <button onclick="sendMessage()">Enviar</button>
-    </div>
+<div id="chat-container"></div>
+
+<div id="input-container">
+  <input type="text" id="user-input" placeholder="Escribe tu mensaje...">
+  <button id="send-btn">Enviar</button>
 </div>
 
 <script>
-const chatBox = document.getElementById('chatBox');
-const userInput = document.getElementById('userInput');
-
-// Aquí pones tu mega array completo de 500+ respuestas
 const respuestas = [
   {keywords:["hola","buenos días","buenas"], respuesta:"¡Hola! ¿Cómo estás?" },
   {keywords:["cómo estás","qué tal"], respuesta:"Estoy bien, gracias por preguntar. ¿Y tú?" },
@@ -373,65 +311,41 @@ const respuestas = [
   {keywords:["qué hacer para mejorar mi postura","espalda recta","ejercicios postura"], respuesta:"Haz estiramientos, fortalece tu core y ajusta la altura de sillas y mesas al sentarte."}
 ];
 
-// Función para enviar mensaje
-function sendMessage() {
-    const text = userInput.value.trim();
-    if(!text) return;
+const chatContainer = document.getElementById("chat-container");
+const userInput = document.getElementById("user-input");
+const sendBtn = document.getElementById("send-btn");
 
-    addMessage(text, 'user');
-    userInput.value = '';
-
-    const respuesta = getRespuesta(text);
-    typeResponse(respuesta);
+function agregarMensaje(mensaje, tipo) {
+  const div = document.createElement("div");
+  div.classList.add("mensaje", tipo);
+  div.textContent = mensaje;
+  chatContainer.prepend(div); // Agregar arriba
 }
 
-// Añadir mensaje al chat (aparece arriba)
-function addMessage(text, type) {
-    const div = document.createElement('div');
-    div.className = `message ${type}`;
-    div.textContent = text;
-    chatBox.prepend(div);
-}
-
-// Obtener respuesta por palabra clave
-function getRespuesta(text) {
-    const lowerText = text.toLowerCase();
-    for(const item of respuestas) {
-        for(const key of item.keywords) {
-            if(lowerText.includes(key)) {
-                return item.respuesta;
-            }
-        }
+function obtenerRespuesta(input) {
+  input = input.toLowerCase();
+  for (let item of respuestas) {
+    for (let keyword of item.keywords) {
+      if (input.includes(keyword)) {
+        return item.respuesta;
+      }
     }
-    return "Lo siento, no tengo una respuesta para eso todavía.";
+  }
+  return "Lo siento, no entiendo tu pregunta.";
 }
 
-// Efecto de escritura en tiempo real
-function typeResponse(text) {
-    const div = document.createElement('div');
-    div.className = 'message assistant';
-    chatBox.prepend(div);
-
-    let i = 0;
-    const cursor = document.createElement('span');
-    cursor.className = 'cursor';
-    div.appendChild(cursor);
-
-    function typeChar() {
-        if(i < text.length) {
-            cursor.insertAdjacentText('beforebegin', text[i]);
-            i++;
-            setTimeout(typeChar, 30);
-        } else {
-            cursor.remove();
-        }
-    }
-    typeChar();
+function enviarMensaje() {
+  const mensaje = userInput.value.trim();
+  if (!mensaje) return;
+  agregarMensaje(mensaje, "usuario");
+  const respuesta = obtenerRespuesta(mensaje);
+  setTimeout(() => agregarMensaje(respuesta, "bot"), 300);
+  userInput.value = "";
 }
 
-// Enviar con Enter
-userInput.addEventListener('keydown', function(e){
-    if(e.key === 'Enter') sendMessage();
+sendBtn.addEventListener("click", enviarMensaje);
+userInput.addEventListener("keypress", function(e) {
+  if (e.key === "Enter") enviarMensaje();
 });
 </script>
 
